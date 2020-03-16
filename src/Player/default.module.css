@@ -1,0 +1,61 @@
+.defaultPlayer .title {
+  font-size: 64px;
+  color: #090199;
+  margin-bottom: 100px;
+  font-weight: bold;
+  background: -webkit-linear-gradient(to right, #1890ff, #090199);
+  background: linear-gradient(to right, #1890ff, #090199);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.defaultPlayer .main {
+  text-align: left;
+}
+.defaultPlayer .main .videoAndBtns {
+  margin-bottom: 60px;
+}
+.defaultPlayer .main .videoAndBtns .btns button {
+  border-radius: 0;
+  background: #090199;
+  width: 110px;
+  border-color: #090199;
+  color: white;
+}
+.defaultPlayer .main .videoAndBtns .btns button:hover {
+  color: yellow;
+}
+.defaultPlayer .main .uploader {
+  background: rgba(128, 128, 128, 0.1);
+  border-radius: 4px;
+  border: 0.5px dashed rgba(9, 1, 153, 0.2);
+  padding: 60px;
+  padding-left: 32px;
+  text-align: left;
+}
+.defaultPlayer .main .uploader .warning {
+  font-size: 1.1em;
+  width: 80%;
+  color: #07017f;
+}
+.defaultPlayer .main .uploader .upload {
+  margin-top: 32px;
+}
+.defaultPlayer .main .uploader .upload .addOnBefore {
+  width: 100px;
+  display: inline-block;
+}
+.defaultPlayer .main .uploader .upload .addOnBefore .text {
+  margin-left: 6px;
+  font-weight: bold;
+}
+.defaultPlayer .main .uploader .upload .addOnAfter {
+  width: 38px;
+  display: inline-block;
+}
+.defaultPlayer .main .uploader .upload .addOnAfter .btn {
+  cursor: pointer;
+}
+.defaultPlayer .main .uploader .upload .addOnAfter .btn:hover {
+  color: #090199;
+}

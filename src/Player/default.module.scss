@@ -1,0 +1,68 @@
+.defaultPlayer {
+    .title {
+        font-size: 64px;
+        color: #090199;
+        margin-bottom: 100px;
+        font-weight: bold;
+        background: -webkit-linear-gradient(to right, #1890ff, #090199);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #1890ff, #090199);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .main {
+        text-align: left;
+        .videoAndBtns {
+            margin-bottom: 60px;
+            .video {
+                
+            }
+            .btns {
+                button {
+                    border-radius: 0;
+                    background: #090199;
+                    width: 110px;
+                    border-color: #090199;
+                    color: white;
+                    &:hover {
+                        color: yellow;
+                    }
+                }
+            }
+        }
+        .uploader {
+            background: rgba(128, 128, 128, 0.1);
+            border-radius: 4px;
+            border: 0.5px dashed rgba(9, 1, 153, 0.2);
+            padding: 60px;
+            padding-left: 32px;
+            text-align: left;
+            .warning {
+                font-size: 1.1em;
+                width: 80%;
+                color: #07017f;
+            }
+            .upload {
+                margin-top: 32px;
+                .addOnBefore {
+                    width: 100px;
+                    display: inline-block;
+                    .text {
+                        margin-left: 6px;
+                        font-weight: bold;
+                    }
+                }
+                .addOnAfter {
+                    width: 38px;
+                    display: inline-block;
+                    .btn {
+                        cursor: pointer;
+                        &:hover {
+                            color: #090199;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
