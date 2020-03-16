@@ -1,26 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Switch, BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import DefaultPlayer from './Player/default';
+import VideoReactPlayer from './Player/videoReact';
+import ReactPlayerPlayer from './Player/reactPlayer';
+import Footer from './Footer';
+import styles from './app.module.scss';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+	render() {
+		return (
+			<Router>
+				<div className={styles.app}>
+					<div className={styles.inlineDiv}>
+						<div className={styles.content}>
+							<Switch>
+								<Route exact path="/default">
+									<DefaultPlayer />
+								</Route>
+								<Route exact path="/video-react">
+									<VideoReactPlayer />
+								</Route>
+								<Route exact path="/react-player">
+									<ReactPlayerPlayer />
+								</Route>
+								<Redirect to="/default" />
+							</Switch>
+						</div>
+						<div className={styles.footer}>
+							<Footer />
+						</div>
+					</div>
+				</div>
+			</Router>
+		)
+	}
 }
 
 export default App;
