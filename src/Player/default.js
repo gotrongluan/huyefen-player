@@ -10,19 +10,29 @@ const DefaultPlayer = () => {
     const [videoUrl, setVideoUrl] = useState('s');
     const [processing, setProcessing] = useState(false);
     const handleCloseChange = () => {
-
+        setEditing(false);
+        handleRemoveFile();
     };
     const handleChange = () => {
-
+        setEditing(true);
     };
     const handleDelete = () => {
 
     };
-    const handleBeforeUpload = () => {
-
+    const handleBeforeUpload = (file) => {
+        const fileSize = file.size;
+        const fileType = file.type;
+        if (fileSize > 104857600) message.error('Your video is too big.');
+        else if (fileType !== 'video/mp4') message.error('Only support .mp4 video! Please replace with .mp4 video.');
+        else {
+            setFile(file);
+            setFileName(file.name);
+        }
+        return false;
     };
     const handleRemoveFile = () => {
-
+        setFile(null);
+        setFileName('');
     };
     const handleUpload = () => {
 
@@ -93,7 +103,7 @@ const DefaultPlayer = () => {
                                                 <span className={styles.btn} onClick={handleUpload}>
                                                     <CloudUploadOutlined />
                                                 </span>
-                                                <span className={styles.btn} onClick={handleRemoveFile}>
+                                                <span className={styles.btn} onClick={handleRemoveFile} style={{ marginLeft: '6px' }}>
                                                     <DeleteOutlined />
                                                 </span>
                                             </span>
