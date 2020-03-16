@@ -7,7 +7,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('s');
+    const [videoUrl, setVideoUrl] = useState(null);
     const [processing, setProcessing] = useState(false);
     const handleCloseChange = () => {
         setEditing(false);
@@ -35,7 +35,15 @@ const DefaultPlayer = () => {
         setFileName('');
     };
     const handleUpload = () => {
-
+        setProcessing(true);
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+            const result = fileReader.result;
+            setVideoUrl(result);
+            handleCloseChange();
+            setProcessing(false);
+        };
     };
     const uploadProps = {
         accept: 'video/mp4',
@@ -51,7 +59,9 @@ const DefaultPlayer = () => {
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
                         <div className={styles.video}>
-
+                            <video>
+                                <source src={videoUrl} type="video/mp4" />
+                            </video>
                         </div>
                         <div className={styles.btns}>
                             {editing ? (
