@@ -1,0 +1,12 @@
+.app {
+  height: 100vh;
+  padding-top: 120px;
+}
+.app .inlineDiv {
+  margin: auto;
+  width: 1100px;
+  margin-bottom: 100px;
+}
+.app .inlineDiv .content {
+  margin-bottom: 48px;
+}

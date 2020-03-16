@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input, Upload, Button, message } from 'antd';
 import { PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined } from '@ant-design/icons';
 import styles from './default.module.scss';
 
 const DefaultPlayer = () => {
+    const videoRef = useRef(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
     const [videoUrl, setVideoUrl] = useState(null);
     const [processing, setProcessing] = useState(false);
+    useEffect(() => {
+        if (videoRef.current) {
+            const videoEle = videoRef.current;
+
+        }
+    }, [videoUrl]);
     const handleCloseChange = () => {
         setEditing(false);
         handleRemoveFile();
@@ -59,8 +66,12 @@ const DefaultPlayer = () => {
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
                         <div className={styles.video}>
-                            <video>
+                            <video
+                                ref={videoRef}
+                                className={styles.videoEle}
+                            >
                                 <source src={videoUrl} type="video/mp4" />
+                                Your browser does not support the video element.
                             </video>
                         </div>
                         <div className={styles.btns}>

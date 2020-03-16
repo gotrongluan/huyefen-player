@@ -1,13 +1,10 @@
 .app {
     height: 100vh;
-    position: relative;
+    padding-top: 120px;
     .inlineDiv {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
+        margin: auto;
         width: 1100px;
+        margin-bottom: 100px;
         .content {
             margin-bottom: 48px;
         }
