@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Input, Upload, Button, message, Slider, Row, Col } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined
+    CaretRightFilled, PauseOutlined, RollbackOutlined
 } from '@ant-design/icons';
 import { secondsToTime } from 'utils';
 import styles from './default.module.scss';
@@ -19,7 +19,7 @@ const Video = ({ videoUrl, ...props }) => {
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [bufferTime, setBuffertime] = useState(0);
-    const [playing, setPlaying] = useState(true);
+    const [playingStatus, setPlayingStatus] = useState(0);
     const [waiting, setWaiting] = useState(false);
 
     useEffect(() => {
@@ -43,15 +43,16 @@ const Video = ({ videoUrl, ...props }) => {
                 setWidth(realWidth);
                 setHeight(realHeight);
             };
-            videoEle.onloadeddata = () => setPlaying(videoEle.autoplay);
+            videoEle.onloadeddata = () => setPlayingStatus(videoEle.autoplay ? 0 : 1);
             videoEle.onprogress = () => {
                 
             }
             videoEle.ontimeupdate = () => setCurrentTime(videoEle.currentTime);
             videoEle.onwaiting = () => setWaiting(true);
             videoEle.onplaying = () => setWaiting(false);
-            videoEle.onplay = () => setPlaying(true);
-            videoEle.onpause = () => setPlaying(false);
+            videoEle.onplay = () => setPlayingStatus(0);
+            videoEle.onpause = () => setPlayingStatus(1);
+            videoEle.onended = () => setPlayingStatus(2);
         }
     }, [videoUrl]);
     const handleMouseEnter = () => {
@@ -62,9 +63,9 @@ const Video = ({ videoUrl, ...props }) => {
     };
     const handleTogglePlay = () => {
         const videoEle = videoRef.current;
-        if (playing) videoEle.pause();
+        if (playingStatus === 0) videoEle.pause();
         else videoEle.play();
-        setPlaying(!playing);
+        setPlayingStatus(playingStatus === 0 ? 1 : 0);
     }
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -84,7 +85,8 @@ const Video = ({ videoUrl, ...props }) => {
                     <Row className={styles.slider}>
                         <Slider
                             min={0}
-                            max={_.ceil(duration)}
+                            max={_.round(duration, 1)}
+                            step={0.1}
                             value={currentTime}
 
                         />
@@ -92,10 +94,12 @@ const Video = ({ videoUrl, ...props }) => {
                     <Row className={styles.options}>
                         <Col span={12} className={styles.left}>
                             <span className={styles.playStatus} onClick={handleTogglePlay}>
-                                {!playing ? (
+                                {playingStatus === 1 ? (
                                     <CaretRightFilled />
-                                ) : (
+                                ) : playingStatus === 0 ? (
                                     <PauseOutlined />
+                                ) : (
+                                    <RollbackOutlined />
                                 )}
                             </span>
                             <span className={styles.time}>
@@ -106,6 +110,16 @@ const Video = ({ videoUrl, ...props }) => {
 
                         </Col>
                     </Row>
+                </div>
+            )}
+            {playingStatus === 2 && (
+                <div className={styles.replay}>
+                    <div className={styles.outer}>
+                        <div className={styles.inlineDiv}>
+                            <div onClick={handleTogglePlay}><RollbackOutlined style={{ fontSize: '84px', cursor: 'pointer' }}/></div>
+                            <div className={styles.text}>Play again</div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

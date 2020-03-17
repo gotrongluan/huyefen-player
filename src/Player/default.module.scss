@@ -22,6 +22,7 @@
                 position: relative;
                 .videoEle {
                     display: inline-block;
+                    cursor: pointer;
                 }
                 .controlVisible {
                     background: rgba(20, 20, 20, 0.03);
@@ -58,6 +59,32 @@
                         }
                         .right {
                             text-align: right;
+                        }
+                    }
+                }
+                .replay {
+                    z-index: 2;
+                    background: rgba(20, 20, 20, 0.3);
+                    color: white;
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                    left: 0;
+                    .outer {
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        .inlineDiv {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                            .text {
+                                margin-top: 16px;
+                                font-size: 1.2em;
+                            }
                         }
                     }
                 }
