@@ -1,13 +1,14 @@
 .defaultPlayer .title {
   font-size: 64px;
   color: #090199;
-  margin-bottom: 100px;
+  margin-bottom: 70px;
   font-weight: bold;
   background: -webkit-linear-gradient(to right, #1890ff, #090199);
   background: linear-gradient(to right, #1890ff, #090199);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 .defaultPlayer .main {
   text-align: left;
@@ -17,11 +18,11 @@
 }
 .defaultPlayer .main .videoAndBtns .video {
   margin-bottom: 24px;
+  background: black;
+  text-align: center;
 }
 .defaultPlayer .main .videoAndBtns .video .videoEle {
-  background: black;
-  width: 100%;
-  height: 520px;
+  display: inline-block;
 }
 .defaultPlayer .main .videoAndBtns .btns button {
   border-radius: 0;
