@@ -116,6 +116,32 @@
                         margin-left: 8px;
                     }
                 }
+                .preview {
+                    position: fixed;
+                    width: 164px;
+                    padding: 2px;
+                    background: black;
+                    border-radius: 3px;
+                    text-align: center;
+                    .inner {
+                        position: relative;
+                        width: 100%;
+                        .videoElement {
+                            display: inline-block;
+                        }
+                        .time {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            display: inline-block;
+                            padding: 1px 6px;
+                            background: rgba(20, 20, 20, 0.8);
+                            color: white;
+                            font-size: 0.9em;
+                        }
+                    }
+                    
+                }
             }
             .btns {
                 button {

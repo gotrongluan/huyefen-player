@@ -15,6 +15,7 @@ const { Search } = Input;
 const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
     const videoRef = useRef(null);
+    const previewRef = useRef(null);
     const [controlVisible, setControlVisible] = useState(false);
     const [duration, setDuration] = useState(null);
     const [currentTime, setCurrentTime] = useState({
@@ -30,6 +31,14 @@ const Video = ({ videoUrl, ...props }) => {
         status: 0,
         text: ''
     });
+    const [preview, setPreview] = useState({
+        visible: false,
+        time: 0,
+        left: 0,
+        bottom: 0
+    });
+    const [previewWidth, setPreviewWidth] = useState(0);
+    const [previewHeight, setPreviewHeight] = useState(0);
 
     useEffect(() => {
         if (videoRef.current) {
@@ -39,17 +48,23 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.onloadedmetadata = () => {
                 const videoHeight = videoEle.videoHeight;
                 const videoWidth = videoEle.videoWidth;
-                let realHeight, realWidth;
+                let realHeight, realWidth, realPreviewHeight, realPreviewWidth;
                 if (videoWidth / videoHeight < 4 / 3) {
                     realHeight = 525;
                     realWidth = (525 / videoHeight) * videoWidth;
+                    realPreviewHeight = 84;
+                    realPreviewWidth = (84 / videoHeight) * videoWidth;
                 }
                 else {
                     const divEle = divRef.current;
                     const divWidth = divEle.clientWidth;
                     realWidth = divWidth;
                     realHeight = (realWidth / videoWidth) * videoHeight;
+                    realPreviewWidth = 160;
+                    realPreviewHeight = (realPreviewWidth / videoWidth) * videoHeight;
                 }
+                setPreviewWidth(realPreviewWidth);
+                setPreviewHeight(realPreviewHeight);
                 setWidth(realWidth);
                 setHeight(realHeight);
             };
@@ -132,6 +147,30 @@ const Video = ({ videoUrl, ...props }) => {
             });
         }
     };
+    const handleMouseOnSlider = e => {
+        const offsetX = e.nativeEvent.offsetX;
+        const sliderWidth = divRef.current.clientWidth - 24;
+        const time = (offsetX / sliderWidth) * duration;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        const left = clientX - 82;
+        const bottom = window.innerHeight - clientY + 16;
+        previewRef.current.currentTime = time;
+        setPreview({
+            visible: true,
+            time,
+            left,
+            bottom
+        });
+    };
+    const resetPreview = () => {
+        setPreview({
+            visible: false,
+            time: 0,
+            left: 0,
+            bottom: 0
+        });
+    };
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <video
@@ -147,7 +186,7 @@ const Video = ({ videoUrl, ...props }) => {
             </video>
             {controlVisible && (
                 <div className={styles.controlVisible}>
-                    <Row className={styles.slider}>
+                    <div className={styles.slider} onMouseMove={handleMouseOnSlider} onMouseLeave={resetPreview}>
                         <Slider
                             min={0}
                             max={_.round(duration, 1)}
@@ -160,9 +199,10 @@ const Video = ({ videoUrl, ...props }) => {
                                 });
                             }}
                             onAfterChange={handleChangeCurrentTime}
+                            
                         />
                         <span className={styles.buffered} style={{ width: `${(bufferTime * 100) / duration}%` }}/>
-                    </Row>
+                    </div>
                     <Row className={styles.options}>
                         <Col span={12} className={styles.left}>
                             <span className={styles.playStatus} onClick={handleTogglePlay}>
@@ -213,6 +253,22 @@ const Video = ({ videoUrl, ...props }) => {
                     </div>
                 </div>
             )}
+            <div
+                className={styles.preview}
+                style={{
+                    left: preview.left,
+                    bottom: preview.bottom,
+                    visibility: preview.visible ? 'visible' : 'hidden',
+                    height: previewHeight
+                }}
+            >
+                <div className={styles.inner}>
+                    <video muted ref={previewRef} className={styles.videoElement} width={previewWidth} height={previewHeight}>
+                        <source src={videoUrl} type="video/mp4" />
+                    </video>
+                    <span className={styles.time}>{`${secondsToTime(preview.time)}`}</span>
+                </div>
+            </div>
         </div>
     );
 };
@@ -223,7 +279,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState(null);
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-c3020467c92794caff33cc651837a20d/WebHD_480.mp4?nva=20200317150414&token=03aaef06d5ed2bbe1ed73');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
