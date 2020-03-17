@@ -19,8 +19,47 @@
                 margin-bottom: 24px;
                 background: black;
                 text-align: center;
+                position: relative;
                 .videoEle {
                     display: inline-block;
+                }
+                .controlVisible {
+                    background: rgba(20, 20, 20, 0.03);
+                    width: 100%;
+                    position: absolute;
+                    bottom: 0;
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    padding-bottom: 6px;
+                    .slider {
+                        :global(.ant-slider) {
+                            width: 100%;
+                            margin: 0;
+                        }
+                    }
+                    .options {
+                        .left {
+                            text-align: left;
+                            color: white;
+                            span {
+                                display: inline-block;
+                                margin-right: 6px;
+                                line-height: 25px;
+                            }
+                            .playStatus {
+                                font-size: 1.7em;
+                                position: relative;
+                                top: 3px;
+                                cursor: pointer;
+                                &:hover {
+                                    opacity: 0.8;
+                                }
+                            }
+                        }
+                        .right {
+                            text-align: right;
+                        }
+                    }
                 }
             }
             .btns {

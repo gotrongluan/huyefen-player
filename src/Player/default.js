@@ -1,28 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input, Upload, Button, message } from 'antd';
-import { PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined } from '@ant-design/icons';
+import _ from 'lodash';
+import { Input, Upload, Button, message, Slider, Row, Col } from 'antd';
+import {
+    PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
+    CaretRightFilled, PauseOutlined
+} from '@ant-design/icons';
+import { secondsToTime } from 'utils';
 import styles from './default.module.scss';
 
 const minimum = (a, b) => a < b ? a : b;
 
-const DefaultPlayer = () => {
-    const videoRef = useRef(null);
+const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
-    const [file, setFile] = useState(null);
-    const [fileName, setFileName] = useState('');
-    const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a.udemycdn.com/2018-02-26_01-07-48-57026b79a022f2010b78262a90d2aa9c/WebHD_480.mp4?nva=20200317063607&token=0fd8ec75f50edce121543');
-    const [processing, setProcessing] = useState(false);
+    const videoRef = useRef(null);
     const [controlVisible, setControlVisible] = useState(false);
-    const [timer, setTimer] = useState(null);
     const [duration, setDuration] = useState(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0)
+    const [height, setHeight] = useState(0);
+    const [bufferTime, setBuffertime] = useState(0);
+    const [playing, setPlaying] = useState(true);
+    const [waiting, setWaiting] = useState(false);
+
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
-            videoEle.onloadstart = () => message.info('Start to load video');
             videoEle.ondurationchange = () => setDuration(videoEle.duration);
             videoEle.onloadedmetadata = () => {
                 const videoHeight = videoEle.videoHeight;
@@ -41,11 +43,83 @@ const DefaultPlayer = () => {
                 setWidth(realWidth);
                 setHeight(realHeight);
             };
-            videoEle.onloadeddata = () => {
-                console.log(videoRef);
+            videoEle.onloadeddata = () => setPlaying(videoEle.autoplay);
+            videoEle.onprogress = () => {
+                
             }
+            videoEle.ontimeupdate = () => setCurrentTime(videoEle.currentTime);
+            videoEle.onwaiting = () => setWaiting(true);
+            videoEle.onplaying = () => setWaiting(false);
+            videoEle.onplay = () => setPlaying(true);
+            videoEle.onpause = () => setPlaying(false);
         }
     }, [videoUrl]);
+    const handleMouseEnter = () => {
+        setControlVisible(true);
+    };
+    const handleMouseLeave = () => {
+        setControlVisible(false);
+    };
+    const handleTogglePlay = () => {
+        const videoEle = videoRef.current;
+        if (playing) videoEle.pause();
+        else videoEle.play();
+        setPlaying(!playing);
+    }
+    return (
+        <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <video
+                {...props}
+                ref={videoRef}
+                className={styles.videoEle}
+                width={width}
+                height={height}
+                onClick={handleTogglePlay}
+            >
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video element.
+            </video>
+            {controlVisible && (
+                <div className={styles.controlVisible}>
+                    <Row className={styles.slider}>
+                        <Slider
+                            min={0}
+                            max={_.ceil(duration)}
+                            value={currentTime}
+
+                        />
+                    </Row>
+                    <Row className={styles.options}>
+                        <Col span={12} className={styles.left}>
+                            <span className={styles.playStatus} onClick={handleTogglePlay}>
+                                {!playing ? (
+                                    <CaretRightFilled />
+                                ) : (
+                                    <PauseOutlined />
+                                )}
+                            </span>
+                            <span className={styles.time}>
+                                {`${secondsToTime(currentTime)} / ${secondsToTime(duration)}`}
+                            </span>
+                        </Col>
+                        <Col span={12} className={styles.right}>
+
+                        </Col>
+                    </Row>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const DefaultPlayer = () => {
+    const videoRef = useRef(null);
+    const divRef = useRef(null);
+    const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState('');
+    const [editing, setEditing] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-07-48-309e829fdec0a3aeb33169c7889af3ef/WebHD_480.mp4?nva=20200317120533&token=0e46fdf33f93078818527');
+    const [processing, setProcessing] = useState(false);
     const handleCloseChange = () => {
         setEditing(false);
         handleRemoveFile();
@@ -96,45 +170,7 @@ const DefaultPlayer = () => {
             <div className={styles.main}>
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
-                        <div className={styles.video} ref={divRef} style={{ height: height }}>
-                            <video
-                                ref={videoRef}
-                                className={styles.videoEle}
-                                width={width}
-                                height={height}
-                                onMouseEnter={() => {
-                                    if (timer) {
-                                        clearTimeout(timer);
-                                        setTimer(null);
-                                    };
-                                    setControlVisible(true);
-                                }}
-                                onMouseLeave={() => {
-                                    if (!timer) {
-                                        const timeTimer = setTimeout(() => {
-                                            setControlVisible(false);
-                                            setTimer(null);
-                                        }, 2000);
-                                        setTimer(timeTimer);
-                                    }
-                                }}
-                            >
-                                <source src={videoUrl} type="video/mp4" />
-                                Your browser does not support the video element.
-                            </video>
-                            {/* {pause && (
-                                <div className={styles.pause}>
-                                </div>
-                            )} */}
-                            {/* {controlVisible && (
-                                <div className={styles.controlBar}>
-                                    Hello
-                                    <div>Current time: {currentTime || '0'}</div>
-                                    <div>Duration: {duration || '0'}</div>
-                                    <div>Duration: {duration || '0'}</div>
-                                </div>
-                            )} */}
-                        </div>
+                        <Video videoUrl={videoUrl} autoPlay/>
                         <div className={styles.btns}>
                             {editing ? (
                                 <Button onClick={handleCloseChange}>

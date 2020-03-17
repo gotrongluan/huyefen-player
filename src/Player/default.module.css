@@ -20,9 +20,64 @@
   margin-bottom: 24px;
   background: black;
   text-align: center;
+  position: relative;
 }
 .defaultPlayer .main .videoAndBtns .video .videoEle {
   display: inline-block;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible {
+  background: rgba(20, 20, 20, 0.03);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 6px;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .slider
+  :global(.ant-slider) {
+  width: 100%;
+  margin: 0;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible .options .left {
+  text-align: left;
+  color: white;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible .options .left span {
+  display: inline-block;
+  margin-right: 6px;
+  line-height: 25px;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .playStatus {
+  font-size: 1.7em;
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .playStatus:hover {
+  opacity: 0.8;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible .options .right {
+  text-align: right;
 }
 .defaultPlayer .main .videoAndBtns .btns button {
   border-radius: 0;
