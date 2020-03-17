@@ -102,11 +102,18 @@
                             left: 50%;
                             transform: translate(-50%, -50%);
                             text-align: center;
-                            .text {
-                                margin-top: 16px;
-                                font-size: 1.2em;
-                            }
                         }
+                    }
+                }
+                .replay {
+                    .text {
+                        margin-top: 16px;
+                        font-size: 1.2em;
+                    }
+                }
+                .error {
+                    .text {
+                        margin-left: 8px;
                     }
                 }
             }

@@ -140,9 +140,12 @@
   transform: translate(-50%, -50%);
   text-align: center;
 }
-.defaultPlayer .main .videoAndBtns .video .overlay .outer .inlineDiv .text {
+.defaultPlayer .main .videoAndBtns .video .replay .text {
   margin-top: 16px;
   font-size: 1.2em;
+}
+.defaultPlayer .main .videoAndBtns .video .error .text {
+  margin-left: 8px;
 }
 .defaultPlayer .main .videoAndBtns .btns button {
   border-radius: 0;

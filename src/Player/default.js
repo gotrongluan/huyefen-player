@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
+import classNames from 'classnames';
 import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined, RollbackOutlined, Loading3QuartersOutlined
+    CaretRightFilled, PauseOutlined, RollbackOutlined, Loading3QuartersOutlined, FrownOutlined
 } from '@ant-design/icons';
 import { secondsToTime, checkValidLink } from 'utils';
 import styles from './default.module.scss';
@@ -25,10 +26,15 @@ const Video = ({ videoUrl, ...props }) => {
     const [bufferTime, setBufferTime] = useState(0);
     const [playingStatus, setPlayingStatus] = useState(0);
     const [waiting, setWaiting] = useState(false);
+    const [error, setError] = useState({
+        status: 0,
+        text: ''
+    });
 
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
+            videoEle.onloadstart = () => message.success('start');
             videoEle.ondurationchange = () => setDuration(videoEle.duration);
             videoEle.onloadedmetadata = () => {
                 const videoHeight = videoEle.videoHeight;
@@ -72,6 +78,30 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.onplay = () => setPlayingStatus(0);
             videoEle.onpause = () => setPlayingStatus(1);
             videoEle.onended = () => setPlayingStatus(2);
+            videoEle.onerror = () => {
+                setError({
+                    status: 1,
+                    text: 'Sorry, there was an error.'
+                });
+                setWidth("100%");
+                setHeight(525);
+            };
+            videoEle.onstalled = () => {
+                setError({
+                    status: 1,
+                    text: 'Sorry, the video is not available.'
+                });
+                setWidth("100%");
+                setHeight(525);
+            };
+            videoEle.onabort = () => {
+                setError({
+                    status: 1,
+                    text: 'Sorry, the video is stoped downloading.'
+                });
+                setWidth("100%");
+                setHeight(525);
+            };
         }
     }, [videoUrl]);
     const handleMouseEnter = () => {
@@ -115,7 +145,7 @@ const Video = ({ videoUrl, ...props }) => {
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video element.
             </video>
-            {true && (
+            {controlVisible && (
                 <div className={styles.controlVisible}>
                     <Row className={styles.slider}>
                         <Slider
@@ -155,7 +185,7 @@ const Video = ({ videoUrl, ...props }) => {
                 </div>
             )}
             {playingStatus === 2 && (
-                <div className={styles.overlay}>
+                <div className={classNames(styles.overlay, styles.replay)}>
                     <div className={styles.outer}>
                         <div className={styles.inlineDiv}>
                             <div onClick={handleTogglePlay}><RollbackOutlined style={{ fontSize: '84px', cursor: 'pointer' }}/></div>
@@ -169,6 +199,16 @@ const Video = ({ videoUrl, ...props }) => {
                     <div className={styles.outer}>
                         <div className={styles.inlineDiv}>
                             <Loading3QuartersOutlined style={{ fontSize: '84px', cursor: 'pointer' }} spin/>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {error.status === 1 && (
+                <div className={classNames(styles.overlay, styles.error)}>
+                    <div className={styles.outer}>
+                        <div className={styles.inlineDiv}>
+                            <FrownOutlined />
+                            <span className={styles.text}>{error.text}</span>
                         </div>
                     </div>
                 </div>
@@ -201,8 +241,10 @@ const DefaultPlayer = () => {
 
     };
     const handleAddExternal = () => {
-        setVideoUrl(externalUrl);
+        setVideoUrl(null);
+        
         handleCloseChange();
+        setTimeout(() => setVideoUrl(externalUrl), 1000);
     };
     const handleBeforeUpload = (file) => {
         const fileSize = file.size;
