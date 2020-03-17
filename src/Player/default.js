@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
-import { Input, Upload, Button, message, Slider, Row, Col } from 'antd';
+import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
     CaretRightFilled, PauseOutlined, RollbackOutlined, Loading3QuartersOutlined
 } from '@ant-design/icons';
-import { secondsToTime } from 'utils';
+import { secondsToTime, checkValidLink } from 'utils';
 import styles from './default.module.scss';
+
+const { TabPane } = Tabs;
+const { Search } = Input;
 
 const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
@@ -180,22 +183,31 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-c3020467c92794caff33cc651837a20d/WebHD_480.mp4?nva=20200317150414&token=03aaef06d5ed2bbe1ed73');
+    const [videoUrl, setVideoUrl] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
         setEditing(false);
-        handleRemoveFile();
+        handleChangeTab();
     };
     const handleChange = () => {
         setEditing(true);
     };
+    const handleChangeTab = () => {
+        handleRemoveFile();
+        setExternalUrl('');
+    };
     const handleDelete = () => {
 
+    };
+    const handleAddExternal = () => {
+        setVideoUrl(externalUrl);
+        handleCloseChange();
     };
     const handleBeforeUpload = (file) => {
         const fileSize = file.size;
         const fileType = file.type;
-        if (fileSize > 104857600) message.error('Your video is too big.');
+        if (fileSize > 6604857600) message.error('Your video is too big.');
         else if (fileType !== 'video/mp4') message.error('Only support .mp4 video! Please replace with .mp4 video.');
         else {
             setFile(file);
@@ -232,7 +244,7 @@ const DefaultPlayer = () => {
             <div className={styles.main}>
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
-                        <Video videoUrl={videoUrl}/>
+                        <Video videoUrl={videoUrl} loop/>
                         <div className={styles.btns}>
                             {editing ? (
                                 <Button onClick={handleCloseChange}>
@@ -252,46 +264,70 @@ const DefaultPlayer = () => {
                     </div>
                 )}
                 {(!videoUrl || editing) && (
-                    <div className={styles.uploader}>
-                        <div className={styles.warning}>
-                            HuYeFen player only suport .mp4 video file. The video must less than 100MB.
-                        </div>
-                        <div className={styles.upload}>
-                            <Input
-                                disabled={processing}
-                                value={fileName}
-                                placeholder="No file selected."
-                                addonBefore={(
-                                    <span className={styles.addOnBefore}>
-                                        <PlayCircleFilled style={{ color: '#090199', position: 'relative', top: '1px' }} />
-                                        <span className={styles.text}>Video file:</span>
-                                    </span>
-                                )}
-                                size="large"
-                                addonAfter={(
-                                    <span className={styles.addOnAfter}>
-                                        {!file ? (
-                                            <Upload {...uploadProps}>
-                                                <span className={styles.btn}>
-                                                    <UploadOutlined />
-                                                </span>
-                                            </Upload>
-                                        ) : processing ? (
-                                            <LoadingOutlined spin />
-                                        ) : (
-                                            <span>
-                                                <span className={styles.btn} onClick={handleUpload}>
-                                                    <CloudUploadOutlined />
-                                                </span>
-                                                <span className={styles.btn} onClick={handleRemoveFile} style={{ marginLeft: '6px' }}>
-                                                    <DeleteOutlined />
-                                                </span>
+                    <div className={styles.tabs}>
+                        <Tabs defaultActiveKey="upload" onChange={handleChangeTab}>
+                            <TabPane tab="Desktop" key="upload">
+                                <div className={styles.upload}>
+                                    <div className={styles.warning}>
+                                        HuYeFen player only suport .mp4 video file. The video must less than 100MB.
+                                    </div>
+                                    <Input
+                                        className={styles.uploadInput}
+                                        disabled={processing}
+                                        value={fileName}
+                                        placeholder="No file selected."
+                                        addonBefore={(
+                                            <span className={styles.addOnBefore}>
+                                                <PlayCircleFilled style={{ color: '#090199', position: 'relative', top: '1px' }} />
+                                                <span className={styles.text}>Video file:</span>
                                             </span>
                                         )}
-                                    </span>
-                                )}
-                            />
-                        </div>
+                                        size="large"
+                                        addonAfter={(
+                                            <span className={styles.addOnAfter}>
+                                                {!file ? (
+                                                    <Upload {...uploadProps}>
+                                                        <span className={styles.btn}>
+                                                            <UploadOutlined />
+                                                        </span>
+                                                    </Upload>
+                                                ) : processing ? (
+                                                    <LoadingOutlined spin />
+                                                ) : (
+                                                    <span>
+                                                        <span className={styles.btn} onClick={handleUpload}>
+                                                            <CloudUploadOutlined />
+                                                        </span>
+                                                        <span className={styles.btn} onClick={handleRemoveFile} style={{ marginLeft: '6px' }}>
+                                                            <DeleteOutlined />
+                                                        </span>
+                                                    </span>
+                                                )}
+                                            </span>
+                                        )}
+                                    />
+                                </div>
+                            </TabPane>
+                            <TabPane tab="External" key="external">
+                                <div className={styles.external}>
+                                    <div className={styles.warning}>
+                                        Add link to .mp4 video file to below input and press button to submit.
+                                    </div>
+                                    <Search
+                                        placeholder="External link"
+                                        value={externalUrl}
+                                        onChange={e => setExternalUrl(e.target.value)}
+                                        enterButton={
+                                            <Button disabled={!checkValidLink(externalUrl)} type="primary">
+                                                Submit
+                                            </Button>
+                                        }
+                                        onSearch={handleAddExternal}
+                                        size="large"
+                                    />
+                                </div>
+                            </TabPane>
+                        </Tabs>
                     </div>
                 )}
             </div>
