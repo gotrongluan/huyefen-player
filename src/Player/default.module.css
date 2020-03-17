@@ -118,7 +118,7 @@
 .defaultPlayer .main .videoAndBtns .video .controlVisible .options .right {
   text-align: right;
 }
-.defaultPlayer .main .videoAndBtns .video .replay {
+.defaultPlayer .main .videoAndBtns .video .overlay {
   z-index: 2;
   background: rgba(20, 20, 20, 0.3);
   color: white;
@@ -128,19 +128,19 @@
   top: 0;
   left: 0;
 }
-.defaultPlayer .main .videoAndBtns .video .replay .outer {
+.defaultPlayer .main .videoAndBtns .video .overlay .outer {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.defaultPlayer .main .videoAndBtns .video .replay .outer .inlineDiv {
+.defaultPlayer .main .videoAndBtns .video .overlay .outer .inlineDiv {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
 }
-.defaultPlayer .main .videoAndBtns .video .replay .outer .inlineDiv .text {
+.defaultPlayer .main .videoAndBtns .video .overlay .outer .inlineDiv .text {
   margin-top: 16px;
   font-size: 1.2em;
 }

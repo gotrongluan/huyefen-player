@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Input, Upload, Button, message, Slider, Row, Col } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined, RollbackOutlined
+    CaretRightFilled, PauseOutlined, RollbackOutlined, Loading3QuartersOutlined
 } from '@ant-design/icons';
 import { secondsToTime } from 'utils';
 import styles from './default.module.scss';
@@ -13,7 +13,10 @@ const Video = ({ videoUrl, ...props }) => {
     const videoRef = useRef(null);
     const [controlVisible, setControlVisible] = useState(false);
     const [duration, setDuration] = useState(null);
-    const [currentTime, setCurrentTime] = useState(0);
+    const [currentTime, setCurrentTime] = useState({
+        changing: false,
+        value: 0
+    });
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [bufferTime, setBufferTime] = useState(0);
@@ -52,7 +55,15 @@ const Video = ({ videoUrl, ...props }) => {
                     }
                 } 
             };
-            videoEle.ontimeupdate = () => setCurrentTime(videoEle.currentTime);
+            videoEle.ontimeupdate = () => {
+                setCurrentTime(prevState => {
+                    if (prevState.changing) return { ...prevState };
+                    return {
+                        changing: false,
+                        value: videoEle.currentTime
+                    };
+                })
+            }
             videoEle.onwaiting = () => setWaiting(true);
             videoEle.onplaying = () => setWaiting(false);
             videoEle.onplay = () => setPlayingStatus(0);
@@ -78,6 +89,10 @@ const Video = ({ videoUrl, ...props }) => {
         const videoEle = videoRef.current;
         if (videoEle) {
             videoEle.currentTime = value;
+            setCurrentTime({
+                changing: false,
+                value
+            });
         }
     };
     return (
@@ -100,8 +115,13 @@ const Video = ({ videoUrl, ...props }) => {
                             min={0}
                             max={_.round(duration, 1)}
                             step={0.1}
-                            value={currentTime}
-                            onChange={value => setCurrentTime(value)}
+                            value={currentTime.value}
+                            onChange={value => {
+                                setCurrentTime({
+                                    value,
+                                    changing: true
+                                });
+                            }}
                             onAfterChange={handleChangeCurrentTime}
                         />
                         <span className={styles.buffered} style={{ width: `${(bufferTime * 100) / duration}%` }}/>
@@ -118,7 +138,7 @@ const Video = ({ videoUrl, ...props }) => {
                                 )}
                             </span>
                             <span className={styles.time}>
-                                {`${secondsToTime(currentTime)} / ${secondsToTime(duration)}`}
+                                {`${secondsToTime(currentTime.value)} / ${secondsToTime(duration)}`}
                             </span>
                         </Col>
                         <Col span={12} className={styles.right}>
@@ -128,11 +148,20 @@ const Video = ({ videoUrl, ...props }) => {
                 </div>
             )}
             {playingStatus === 2 && (
-                <div className={styles.replay}>
+                <div className={styles.overlay}>
                     <div className={styles.outer}>
                         <div className={styles.inlineDiv}>
                             <div onClick={handleTogglePlay}><RollbackOutlined style={{ fontSize: '84px', cursor: 'pointer' }}/></div>
                             <div className={styles.text}>Play again</div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {waiting && (
+                <div className={styles.overlay}>
+                    <div className={styles.outer}>
+                        <div className={styles.inlineDiv}>
+                            <Loading3QuartersOutlined style={{ fontSize: '84px', cursor: 'pointer' }} spin/>
                         </div>
                     </div>
                 </div>
