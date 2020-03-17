@@ -81,6 +81,10 @@ const Video = ({ videoUrl, ...props }) => {
         const videoEle = videoRef.current;
         if (videoEle) {
             if (playingStatus === 0) videoEle.pause();
+            else if (playingStatus === 2) {
+                videoEle.currentTime = 0;
+                videoEle.play();
+            }
             else videoEle.play();
             setPlayingStatus(playingStatus === 0 ? 1 : 0);
         }
@@ -176,7 +180,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-73dd87dd3dc3d0a9f4443ecd90ed6c38/WebHD_480.mp4?nva=20200317142029&token=06cffa9e01680d9eb700f');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-c3020467c92794caff33cc651837a20d/WebHD_480.mp4?nva=20200317150414&token=03aaef06d5ed2bbe1ed73');
     const [processing, setProcessing] = useState(false);
     const handleCloseChange = () => {
         setEditing(false);
