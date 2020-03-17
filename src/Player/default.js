@@ -63,10 +63,18 @@ const Video = ({ videoUrl, ...props }) => {
     };
     const handleTogglePlay = () => {
         const videoEle = videoRef.current;
-        if (playingStatus === 0) videoEle.pause();
-        else videoEle.play();
-        setPlayingStatus(playingStatus === 0 ? 1 : 0);
-    }
+        if (videoEle) {
+            if (playingStatus === 0) videoEle.pause();
+            else videoEle.play();
+            setPlayingStatus(playingStatus === 0 ? 1 : 0);
+        }
+    };
+    const handleChangeCurrentTime = value => {
+        const videoEle = videoRef.current;
+        if (videoEle) {
+            videoEle.currentTime = value;
+        }
+    };
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <video
@@ -88,7 +96,8 @@ const Video = ({ videoUrl, ...props }) => {
                             max={_.round(duration, 1)}
                             step={0.1}
                             value={currentTime}
-
+                            onChange={value => setCurrentTime(value)}
+                            onAfterChange={handleChangeCurrentTime}
                         />
                     </Row>
                     <Row className={styles.options}>
