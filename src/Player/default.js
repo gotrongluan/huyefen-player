@@ -8,8 +8,6 @@ import {
 import { secondsToTime } from 'utils';
 import styles from './default.module.scss';
 
-const minimum = (a, b) => a < b ? a : b;
-
 const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
     const videoRef = useRef(null);
@@ -18,7 +16,7 @@ const Video = ({ videoUrl, ...props }) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
-    const [bufferTime, setBuffertime] = useState(0);
+    const [bufferTime, setBufferTime] = useState(0);
     const [playingStatus, setPlayingStatus] = useState(0);
     const [waiting, setWaiting] = useState(false);
 
@@ -45,8 +43,15 @@ const Video = ({ videoUrl, ...props }) => {
             };
             videoEle.onloadeddata = () => setPlayingStatus(videoEle.autoplay ? 0 : 1);
             videoEle.onprogress = () => {
-                
-            }
+                let buffer = 0;
+                for (let i = 0; i < videoEle.buffered.length; i++) {
+                    if (videoEle.buffered.start(videoEle.buffered.length - 1 - i) <= videoEle.currentTime) {
+                        buffer = videoEle.buffered.end(videoEle.buffered.length - 1 - i);
+                        setBufferTime(buffer);
+                        return;
+                    }
+                } 
+            };
             videoEle.ontimeupdate = () => setCurrentTime(videoEle.currentTime);
             videoEle.onwaiting = () => setWaiting(true);
             videoEle.onplaying = () => setWaiting(false);
@@ -88,7 +93,7 @@ const Video = ({ videoUrl, ...props }) => {
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video element.
             </video>
-            {controlVisible && (
+            {true && (
                 <div className={styles.controlVisible}>
                     <Row className={styles.slider}>
                         <Slider
@@ -99,6 +104,7 @@ const Video = ({ videoUrl, ...props }) => {
                             onChange={value => setCurrentTime(value)}
                             onAfterChange={handleChangeCurrentTime}
                         />
+                        <span className={styles.buffered} style={{ width: `${(bufferTime * 100) / duration}%` }}/>
                     </Row>
                     <Row className={styles.options}>
                         <Col span={12} className={styles.left}>
@@ -141,7 +147,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-07-48-309e829fdec0a3aeb33169c7889af3ef/WebHD_480.mp4?nva=20200317120533&token=0e46fdf33f93078818527');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-73dd87dd3dc3d0a9f4443ecd90ed6c38/WebHD_480.mp4?nva=20200317142029&token=06cffa9e01680d9eb700f');
     const [processing, setProcessing] = useState(false);
     const handleCloseChange = () => {
         setEditing(false);
@@ -193,7 +199,7 @@ const DefaultPlayer = () => {
             <div className={styles.main}>
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
-                        <Video videoUrl={videoUrl} autoPlay/>
+                        <Video videoUrl={videoUrl}/>
                         <div className={styles.btns}>
                             {editing ? (
                                 <Button onClick={handleCloseChange}>

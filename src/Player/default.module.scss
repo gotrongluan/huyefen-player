@@ -33,9 +33,30 @@
                     padding-right: 12px;
                     padding-bottom: 6px;
                     .slider {
-                        :global(.ant-slider) {
-                            width: 100%;
-                            margin: 0;
+                        height: 12px;
+                        position: relative;
+                        :global {
+                            .ant-slider {
+                                width: 100%;
+                                margin: 0;
+                                .ant-slider-track {
+                                    z-index: 2;
+                                }
+                                .ant-slider-handle {
+                                    z-index: 3;
+                                }
+                            }
+                        }
+                        .buffered {
+                            display: inline-block;
+                            position: absolute;
+                            top: 50%;
+                            left: 0;
+                            height: 4px;
+                            background: rgba(9, 1, 153, 0.3);
+                            transform: translate(0, -50%);
+                            border-radius: 2px;
+                            z-index: 1;
                         }
                     }
                     .options {

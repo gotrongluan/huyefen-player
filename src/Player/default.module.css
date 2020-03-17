@@ -35,15 +35,53 @@
   padding-right: 12px;
   padding-bottom: 6px;
 }
+.defaultPlayer .main .videoAndBtns .video .controlVisible .slider {
+  height: 12px;
+  position: relative;
+}
 .defaultPlayer
   .main
   .videoAndBtns
   .video
   .controlVisible
   .slider
-  :global(.ant-slider) {
+  :global
+  .ant-slider {
   width: 100%;
   margin: 0;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .slider
+  :global
+  .ant-slider
+  .ant-slider-track {
+  z-index: 2;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .slider
+  :global
+  .ant-slider
+  .ant-slider-handle {
+  z-index: 3;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible .slider .buffered {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  background: rgba(9, 1, 153, 0.3);
+  transform: translate(0, -50%);
+  border-radius: 2px;
+  z-index: 1;
 }
 .defaultPlayer .main .videoAndBtns .video .controlVisible .options .left {
   text-align: left;
