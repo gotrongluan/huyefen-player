@@ -5,7 +5,7 @@ import { Input, Upload, Button, message, Slider, Row, Col, Dropdown, Menu, Tabs,
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, ExpandOutlined, CloseOutlined,
     CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined,
-    FileTextFilled, SettingFilled
+    FileTextFilled, SettingFilled, CheckOutlined
 } from '@ant-design/icons';
 import Mute from 'icons/Mute';
 import SmallVolume from 'icons/SmallVolume';
@@ -19,6 +19,28 @@ const { SubMenu } = Menu;
 const MenuItem = Menu.Item;
 const { Sider } = Layout;
 
+const resolutions = {
+    '720': '720p (HD)',
+    '480': '480p',
+    '360': '360p',
+    '240': '240p'
+};
+
+const rates = {
+    '0.25': '0.25',
+    '0.5': '0.5',
+    '0.75': '0.75',
+    '1.0': 'Normal',
+    '1.25': '1.25',
+    '1.5': '1.25',
+    '1.75': '1.75',
+    '2.0': '2.0'
+};
+
+const captions = {
+    eng: 'English',
+    vie: 'Vietnamese'
+}
 const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
     const videoRef = useRef(null);
@@ -51,7 +73,10 @@ const Video = ({ videoUrl, ...props }) => {
     const [volume, setVolume] = useState(0);
     const [oldVolume, setOldVolume] = useState(0);
     const [volumeVisible, setVolumeVisible] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState("1.0");
     const [curOpenKeys, setOpenKeys] = useState([]);
+    const [resolution, setResolution] = useState('720');
+    const [caption, setCaption] = useState('eng');
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
@@ -83,6 +108,7 @@ const Video = ({ videoUrl, ...props }) => {
                 setPlayingStatus(videoEle.autoplay ? 0 : 1);
                 setVolume(videoEle.volume);
                 if (videoEle.volume === 0) setOldVolume(1); else setOldVolume(videoEle.volume);
+
             };
             videoEle.onprogress = () => {
                 let buffer = 0;
@@ -270,59 +296,34 @@ const Video = ({ videoUrl, ...props }) => {
             className={styles.menu}
             openKeys={curOpenKeys}
             onOpenChange={handleOpenKeysChange}
+            multiple
+            selectedKeys={[resolution, playbackRate, caption]}
         >
-            <SubMenu key="resolution" title="Resolution">
-                <MenuItem key="720">
-                    720p
-                </MenuItem>
-                <MenuItem key="480">
-                    480p
-                </MenuItem>
-                <MenuItem key="360">
-                    360p
-                </MenuItem>
-                <MenuItem key="240">
-                    240p
-                </MenuItem>
-                <MenuItem key="144">
-                    144p
-                </MenuItem>
+            <SubMenu key="resolution" title={`Resolution (${resolutions[resolution]})`}>
+                {_.map(_.keys(resolutions), resolutionKey => (
+                    <MenuItem key={resolutionKey} >
+                        {resolutions[resolutionKey]}
+                        {resolutionKey === resolution && (<CheckOutlined style={{ marginLeft: '5px', color: '#090199', fontSize: '0.85em' }}/>)}
+                    </MenuItem>
+                ))}
             </SubMenu>
             <Menu.Divider />
-            <SubMenu key="rate" title="Playback rate">
-                <MenuItem key="0.25">
-                    0.25
-                </MenuItem>
-                <MenuItem key="0.5">
-                    0.5
-                </MenuItem>
-                <MenuItem key="0.75">
-                    0.75
-                </MenuItem>
-                <MenuItem key="1">
-                    Normal
-                </MenuItem>
-                <MenuItem key="1.25">
-                    1.25
-                </MenuItem>
-                <MenuItem key="1.5">
-                    1.5
-                </MenuItem>
-                <MenuItem key="1.75">
-                    1.75
-                </MenuItem>
-                <MenuItem key="2">
-                    2.0
-                </MenuItem>
+            <SubMenu key="rate" title={`Playback rate (${rates[playbackRate]})`}>
+                {_.map(_.keys(rates), rateKey => (
+                    <MenuItem key={rateKey}>
+                        {rates[rateKey]}
+                        {rateKey === playbackRate && (<CheckOutlined style={{ marginLeft: '5px', color: '#090199', fontSize: '0.85em' }}/>)}
+                    </MenuItem>
+                ))}
             </SubMenu>
             <Menu.Divider />
-            <SubMenu key="captions" title="Captions">
-                <MenuItem key="eng">
-                    English
-                </MenuItem>
-                <MenuItem key="vie">
-                    Vietnamese
-                </MenuItem> 
+            <SubMenu key="captions" title={`Captions (${captions[caption]})`}>
+                {_.map(_.keys(captions), captionKey => (
+                    <MenuItem key={captionKey}>
+                        {captions[captionKey]}
+                        {captionKey === caption && (<CheckOutlined style={{ marginLeft: '5px', color: '#090199', fontSize: '0.85em' }}/>)}
+                    </MenuItem>
+                ))}
             </SubMenu>
         </Menu>
     );
@@ -563,7 +564,7 @@ const DefaultPlayer = () => {
     };
     return (
         <div className={styles.defaultPlayer}>
-            <div className={styles.title}>Default Player</div>
+            <div className={styles.title}>HuYeFen Player</div>
             <div className={styles.main}>
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
