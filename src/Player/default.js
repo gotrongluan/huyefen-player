@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
+import { Input, Upload, Button, message, Slider, Row, Col, Dropdown, Menu, Tabs, Tooltip, Popover, Layout } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, ExpandOutlined, CloseOutlined,
-    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined
+    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined,
+    FileTextFilled, SettingFilled
 } from '@ant-design/icons';
 import Mute from 'icons/Mute';
 import SmallVolume from 'icons/SmallVolume';
@@ -14,6 +15,9 @@ import styles from './default.module.scss';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
+const { SubMenu } = Menu;
+const MenuItem = Menu.Item;
+const { Sider } = Layout;
 
 const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
@@ -47,6 +51,7 @@ const Video = ({ videoUrl, ...props }) => {
     const [volume, setVolume] = useState(0);
     const [oldVolume, setOldVolume] = useState(0);
     const [volumeVisible, setVolumeVisible] = useState(false);
+    const [curOpenKeys, setOpenKeys] = useState([]);
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
@@ -115,15 +120,19 @@ const Video = ({ videoUrl, ...props }) => {
         }
     }, [videoUrl]);
     useEffect(() => {
-        document.addEventListener('fullscreenchange', e => setFullScreen(!!document.fullscreenElement), false);
-        document.addEventListener('webkitfullscreenchange', e => setFullScreen(!!document.webkitFullscreenElement), false);
-        document.addEventListener('mozfullscreenchange', e => setFullScreen(!!document.mozFullscreenElement), false);
-        document.addEventListener('msfullscreenchange', e => setFullScreen(!!document.msFullscreenElement), false);
+        const fullscreenFn = e => setFullScreen(!!document.fullscreenElement);
+        const webkitFullScreenFn = e => setFullScreen(!!document.webkitFullscreenElement);
+        const mozFullscreenFn = e => setFullScreen(!!document.mozFullscreenElement);
+        const msFullscreenFn = e => setFullScreen(!!document.msFullscreenElement);
+        document.addEventListener('fullscreenchange', fullscreenFn, false);
+        document.addEventListener('webkitfullscreenchange', webkitFullScreenFn, false);
+        document.addEventListener('mozfullscreenchange', mozFullscreenFn, false);
+        document.addEventListener('msfullscreenchange', msFullscreenFn, false);
         return () => {
-            document.removeEventListener('fullscreenchange');
-            document.removeEventListener('webkitfullscreenchange');
-            document.removeEventListener('mozfullscreenchange');
-            document.removeEventListener('msfullscreenchange');
+            document.removeEventListener('fullscreenchange', fullscreenFn);
+            document.removeEventListener('webkitfullscreenchange', webkitFullScreenFn);
+            document.removeEventListener('mozfullscreenchange', mozFullscreenFn);
+            document.removeEventListener('msfullscreenchange', msFullscreenFn);
         };
     }, []);
     const handleError = messageText => {
@@ -246,6 +255,75 @@ const Video = ({ videoUrl, ...props }) => {
             }
         }
     };
+    const handleOpenKeysChange = openKeys => {
+        const latestOpenKey = _.find(openKeys, key => _.indexOf(curOpenKeys, key) === -1);
+        if (_.indexOf(['resolution', 'rate', 'captions'], latestOpenKey) === -1) {
+            setOpenKeys(openKeys);
+        }
+        else {
+            setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+        }
+    };
+    const settingsMenu = (
+        <Menu
+            mode="inline"
+            className={styles.menu}
+            openKeys={curOpenKeys}
+            onOpenChange={handleOpenKeysChange}
+        >
+            <SubMenu key="resolution" title="Resolution">
+                <MenuItem key="720">
+                    720p
+                </MenuItem>
+                <MenuItem key="480">
+                    480p
+                </MenuItem>
+                <MenuItem key="360">
+                    360p
+                </MenuItem>
+                <MenuItem key="240">
+                    240p
+                </MenuItem>
+                <MenuItem key="144">
+                    144p
+                </MenuItem>
+            </SubMenu>
+            <SubMenu key="rate" title="Playback rate">
+                <MenuItem key="0.25">
+                    0.25
+                </MenuItem>
+                <MenuItem key="0.5">
+                    0.5
+                </MenuItem>
+                <MenuItem key="0.75">
+                    0.75
+                </MenuItem>
+                <MenuItem key="1">
+                    Normal
+                </MenuItem>
+                <MenuItem key="1.25">
+                    1.25
+                </MenuItem>
+                <MenuItem key="1.5">
+                    1.5
+                </MenuItem>
+                <MenuItem key="1.75">
+                    1.75
+                </MenuItem>
+                <MenuItem key="2">
+                    2.0
+                </MenuItem>
+            </SubMenu>
+            <SubMenu key="captions" title="Captions">
+                <MenuItem key="eng">
+                    English
+                </MenuItem>
+                <MenuItem key="vie">
+                    Vietnamese
+                </MenuItem> 
+            </SubMenu>
+        </Menu>
+    );
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }}>
             <video
@@ -260,7 +338,7 @@ const Video = ({ videoUrl, ...props }) => {
                 Your browser does not support the video element.
             </video>
             <div className={styles.controlVisible} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                <div style={{ opacity: controlVisible ? 1 : 0 }}>
+                <div style={{ opacity: controlVisible ? 1 : 1 }}>
                     <div className={styles.slider} onMouseMove={handleMouseOnSlider} onMouseLeave={resetPreview}>
                         <Slider
                             min={0}
@@ -281,20 +359,31 @@ const Video = ({ videoUrl, ...props }) => {
                     <Row className={styles.options}>
                         <Col span={12} className={styles.left}>
                             <span className={styles.back} onClick={handlePlayBack}>
-                                <BackwardOutlined />
+                                <Tooltip placement="top" title="Back 15s">
+                                    <BackwardOutlined />
+                                </Tooltip>  
                             </span>
                             <span className={styles.playStatus} onClick={handleTogglePlay}>
                                 {playingStatus === 1 ? (
-                                    <CaretRightFilled />
+                                    <Tooltip placement="top" title="Play">
+                                        <CaretRightFilled />
+                                    </Tooltip>
                                 ) : playingStatus === 0 ? (
-                                    <PauseOutlined />
+                                    <Tooltip placement="top" title="Pause">
+                                        <PauseOutlined />
+                                    </Tooltip>
                                 ) : (
-                                    <ReloadOutlined />
+                                    <Tooltip placement="top" title="Reload">
+                                        <ReloadOutlined />
+                                    </Tooltip>
                                 )}
                             </span>
                             <span className={styles.forward} onClick={handlePlayForward}>
-                                <ForwardOutlined />
+                                <Tooltip placement="top" title="Forward 15s">
+                                    <ForwardOutlined />
+                                </Tooltip>
                             </span>
+                            
                             <span className={styles.volume} onMouseEnter={() => setVolumeVisible(true)} onMouseLeave={() => setVolumeVisible(false)}>
                                 <Button className={styles.sound} onClick={handleToggleVolume}>
                                     {volume === 0 ? (
@@ -324,8 +413,35 @@ const Video = ({ videoUrl, ...props }) => {
                             </span>
                         </Col>
                         <Col span={12} className={styles.right}>
+                            <span className={styles.setting}>
+                                <Popover
+                                    content={settingsMenu}
+                                    trigger="click"
+                                    placement="top"
+                                    arrowPointAtCenter
+                                    popupClassName={styles.settingsPopover}
+                                    popupAlign={{ offset: [!fullScreen ? 0 : -35, -10] }}
+                                    getPopupContainer={() => divRef.current}
+                                >
+                                    <SettingFilled />
+                                </Popover>
+                            </span>
+                            <span className={styles.transcript}>
+                                <Tooltip title="Transcript" placement="top">
+                                    <FileTextFilled />
+                                </Tooltip>
+                            </span>
+                            
                             <span className={styles.expand} onClick={handleToggleExpand}>
-                                {!fullScreen ? <ExpandOutlined /> : <CompressOutlined />}
+                                {!fullScreen ? (
+                                    <Tooltip placement="top" title="Full screen">
+                                        <ExpandOutlined />
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip placement="top" title="Collapse">
+                                        <CompressOutlined />
+                                    </Tooltip>
+                                )}
                             </span>
                         </Col>
                     </Row>
@@ -366,7 +482,7 @@ const Video = ({ videoUrl, ...props }) => {
                     left: preview.left,
                     bottom: preview.bottom,
                     visibility: preview.visible ? 'visible' : 'hidden',
-                    height: previewHeight
+                    height: previewHeight + 4
                 }}
             >
                 <div className={styles.inner}>
@@ -386,7 +502,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200318121228&token=0d93d6372dfa01b5871a1');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200318171658&token=0f76c40ee2b755bfa21e2');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {

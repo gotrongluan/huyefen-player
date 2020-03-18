@@ -308,7 +308,7 @@
 }
 .defaultPlayer .main .videoAndBtns .video .controlVisible .options .right span {
   display: inline-block;
-  margin-left: 6px;
+  margin-left: 8px;
   line-height: 25px;
 }
 .defaultPlayer
@@ -318,7 +318,23 @@
   .controlVisible
   .options
   .right
-  .expand {
+  .expand,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .setting,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .transcript {
   font-size: 1.3em;
   position: relative;
   top: 3px;
@@ -331,7 +347,23 @@
   .controlVisible
   .options
   .right
-  .expand:hover {
+  .expand:hover,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .setting:hover,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .transcript:hover {
   opacity: 0.8;
 }
 .defaultPlayer .main .videoAndBtns .video .overlay {
@@ -427,4 +459,22 @@
 }
 .defaultPlayer .main .tabs .upload .uploadInput .addOnAfter .btn:hover {
   color: #090199;
+}
+.settingsPopover {
+  z-index: 30;
+  width: auto;
+}
+.settingsPopover :global .ant-popover-inner-content {
+  padding: 0;
+}
+.settingsPopover :global .ant-popover-arrow {
+  display: none;
+}
+.settingsPopover :global .ant-menu-root {
+  width: 220px;
+  height: 250px;
+  overflow: auto;
+}
+.settingsPopover :global .ant-menu-root::-webkit-scrollbar {
+  display: none;
 }
