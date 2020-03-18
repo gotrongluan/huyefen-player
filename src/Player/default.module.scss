@@ -20,6 +20,10 @@
                 background: black;
                 text-align: center;
                 position: relative;
+                &::-webkit-full-screen {
+                    width: 100%;
+                    height: 100%;
+                }
                 .videoEle {
                     display: inline-block;
                     cursor: pointer;
@@ -32,6 +36,11 @@
                     padding-left: 12px;
                     padding-right: 12px;
                     padding-bottom: 6px;
+                    & > div {
+                        transition: opacity 0.3s ease-in;
+                        -webkit-transition: opacity 0.3s ease-in;
+                        -moz-transition: opacity 0.3s ease-in;
+                    }
                     .slider {
                         height: 12px;
                         position: relative;
@@ -127,6 +136,21 @@
                         }
                         .right {
                             text-align: right;
+                            color: white;
+                            span {
+                                display: inline-block;
+                                margin-left: 6px;
+                                line-height: 25px;
+                            }
+                            .expand {
+                                font-size: 1.3em;
+                                position: relative;
+                                top: 3px;
+                                cursor: pointer;
+                                &:hover {
+                                    opacity: 0.8;
+                                }
+                            }
                         }
                     }
                 }
@@ -170,6 +194,7 @@
                     background: black;
                     border-radius: 3px;
                     text-align: center;
+                    height: auto;
                     .inner {
                         position: relative;
                         width: 100%;

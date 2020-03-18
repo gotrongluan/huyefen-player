@@ -22,6 +22,10 @@
   text-align: center;
   position: relative;
 }
+.defaultPlayer .main .videoAndBtns .video::-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
 .defaultPlayer .main .videoAndBtns .video .videoEle {
   display: inline-block;
   cursor: pointer;
@@ -49,6 +53,11 @@
   padding-left: 12px;
   padding-right: 12px;
   padding-bottom: 6px;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible > div {
+  transition: opacity 0.3s ease-in;
+  -webkit-transition: opacity 0.3s ease-in;
+  -moz-transition: opacity 0.3s ease-in;
 }
 .defaultPlayer .main .videoAndBtns .video .controlVisible .slider {
   height: 12px;
@@ -295,6 +304,35 @@
 }
 .defaultPlayer .main .videoAndBtns .video .controlVisible .options .right {
   text-align: right;
+  color: white;
+}
+.defaultPlayer .main .videoAndBtns .video .controlVisible .options .right span {
+  display: inline-block;
+  margin-left: 6px;
+  line-height: 25px;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .expand {
+  font-size: 1.3em;
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .right
+  .expand:hover {
+  opacity: 0.8;
 }
 .defaultPlayer .main .videoAndBtns .video .overlay {
   z-index: 2;
@@ -332,6 +370,7 @@
   background: black;
   border-radius: 3px;
   text-align: center;
+  height: auto;
 }
 .defaultPlayer .main .videoAndBtns .video .preview .inner {
   position: relative;

@@ -3,8 +3,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
 import {
-    PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined
+    PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, ExpandOutlined, CloseOutlined,
+    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined
 } from '@ant-design/icons';
 import Mute from 'icons/Mute';
 import SmallVolume from 'icons/SmallVolume';
@@ -19,7 +19,9 @@ const Video = ({ videoUrl, ...props }) => {
     const divRef = useRef(null);
     const videoRef = useRef(null);
     const previewRef = useRef(null);
+    const [fullScreen, setFullScreen] = useState(false);
     const [controlVisible, setControlVisible] = useState(false);
+    const [visibleTimer, setVisibleTimer] = useState(null);
     const [duration, setDuration] = useState(null);
     const [currentTime, setCurrentTime] = useState({
         changing: false,
@@ -122,9 +124,19 @@ const Video = ({ videoUrl, ...props }) => {
     };
     const handleMouseEnter = () => {
         setControlVisible(true);
+        if (visibleTimer) {
+            setVisibleTimer(null);
+            clearTimeout(visibleTimer);
+        }
     };
     const handleMouseLeave = () => {
-        setControlVisible(false);
+        if (!visibleTimer) {
+            const timer = setTimeout(() => {
+                setControlVisible(false);
+                setVisibleTimer(null);
+            }, 2000);
+            setVisibleTimer(timer);
+        }
     };
     const handleTogglePlay = () => {
         const videoEle = videoRef.current;
@@ -206,21 +218,38 @@ const Video = ({ videoUrl, ...props }) => {
             }
         }
     };
+    const handleExpand = () => {
+        const divEle = divRef.current;
+        if (!fullScreen) {
+            if (divEle.requestFullscreen) {
+                divEle.requestFullscreen()
+                    .then(res => setFullScreen(true))
+                    .catch(err => message.error(`Error attempting to enable full-screen mode: ${err.message}`));
+                
+            }
+        }
+        else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                setFullScreen(false);
+            }
+        }
+    };
     return (
-        <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div className={styles.video} ref={divRef} style={{ height: height }}>
             <video
                 {...props}
                 ref={videoRef}
                 className={styles.videoEle}
-                width={width}
-                height={height}
+                width={!fullScreen ? width : '100%'}
+                height={!fullScreen ? height : '100%'}
                 onClick={handleTogglePlay}
             >
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video element.
             </video>
-            {true && (
-                <div className={styles.controlVisible}>
+            <div className={styles.controlVisible} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div style={{ opacity: controlVisible ? 1 : 0 }}>
                     <div className={styles.slider} onMouseMove={handleMouseOnSlider} onMouseLeave={resetPreview}>
                         <Slider
                             min={0}
@@ -284,11 +313,13 @@ const Video = ({ videoUrl, ...props }) => {
                             </span>
                         </Col>
                         <Col span={12} className={styles.right}>
-
+                            <span className={styles.expand} onClick={handleExpand}>
+                                {!fullScreen ? <ExpandOutlined /> : <CompressOutlined />}
+                            </span>
                         </Col>
                     </Row>
                 </div>
-            )}
+            </div>
             {playingStatus === 2 && (
                 <div className={classNames(styles.overlay, styles.replay)}>
                     <div className={styles.outer}>
@@ -344,7 +375,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-05-11_11-14-45-8469d1761758f153fa31634801ff8d12/WebHD_480.mp4?nva=20200318110018&token=05a26174b39ce1fa9e411');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200318121228&token=0d93d6372dfa01b5871a1');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
