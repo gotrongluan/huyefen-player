@@ -114,6 +114,18 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.onabort = () => handleError('Sorry, the video is stoped downloading.');
         }
     }, [videoUrl]);
+    useEffect(() => {
+        document.addEventListener('fullscreenchange', e => setFullScreen(!!document.fullscreenElement), false);
+        document.addEventListener('webkitfullscreenchange', e => setFullScreen(!!document.webkitFullscreenElement), false);
+        document.addEventListener('mozfullscreenchange', e => setFullScreen(!!document.mozFullscreenElement), false);
+        document.addEventListener('msfullscreenchange', e => setFullScreen(!!document.msFullscreenElement), false);
+        return () => {
+            document.removeEventListener('fullscreenchange');
+            document.removeEventListener('webkitfullscreenchange');
+            document.removeEventListener('mozfullscreenchange');
+            document.removeEventListener('msfullscreenchange');
+        };
+    }, []);
     const handleError = messageText => {
         setError({
             status: 1,
@@ -218,20 +230,19 @@ const Video = ({ videoUrl, ...props }) => {
             }
         }
     };
-    const handleExpand = () => {
+    const handleToggleExpand = () => {
         const divEle = divRef.current;
-        if (!fullScreen) {
+        if (!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement)) {
             if (divEle.requestFullscreen) {
                 divEle.requestFullscreen()
-                    .then(res => setFullScreen(true))
                     .catch(err => message.error(`Error attempting to enable full-screen mode: ${err.message}`));
-                
             }
         }
         else {
             if (document.exitFullscreen) {
-                document.exitFullscreen();
-                setFullScreen(false);
+                document.exitFullscreen()
+                    .catch(err => message.error(`Error attempting to exit full-screen mode: ${err.message}`));
+                
             }
         }
     };
@@ -313,7 +324,7 @@ const Video = ({ videoUrl, ...props }) => {
                             </span>
                         </Col>
                         <Col span={12} className={styles.right}>
-                            <span className={styles.expand} onClick={handleExpand}>
+                            <span className={styles.expand} onClick={handleToggleExpand}>
                                 {!fullScreen ? <ExpandOutlined /> : <CompressOutlined />}
                             </span>
                         </Col>
