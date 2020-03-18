@@ -257,7 +257,16 @@ const Video = ({ videoUrl, ...props }) => {
                             </span>
                             <span className={styles.volume} onMouseEnter={() => setVolumeVisible(true)} onMouseLeave={() => setVolumeVisible(false)}>
                                 <Button className={styles.sound} onClick={handleToggleVolume}>
-                                    {volume === 0 ? <Mute/> : volume < 0.5 ? <SmallVolume/> : <Volume/>}
+                                    {volume === 0 ? (
+                                        <>
+                                            <Mute/>
+                                            <CloseOutlined className={styles.close} />
+                                        </>
+                                    ) : volume < 0.5 ? (
+                                        <SmallVolume/>
+                                    ) : (
+                                        <Volume/>
+                                    )}
                                 </Button>
                                 <span className={volumeVisible ? styles.slider : classNames(styles.slider, styles.hiddenSlider)} >
                                     <Slider

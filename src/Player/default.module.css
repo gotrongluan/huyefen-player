@@ -195,10 +195,12 @@
   display: inline-block;
   line-height: 25px;
   background: transparent;
+  position: relative;
   font-size: 1.32em;
   top: 1px;
   margin-right: 0;
   padding: 0;
+  height: 25px;
 }
 .defaultPlayer
   .main
@@ -231,6 +233,23 @@
   outline: 0;
   box-shadow: none;
   border: none;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .sound
+  .close {
+  font-size: 0.5em;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translate(0, -50%);
 }
 .defaultPlayer
   .main
