@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined, RollbackOutlined, Loading3QuartersOutlined, FrownOutlined
+    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined
 } from '@ant-design/icons';
 import { secondsToTime, checkValidLink } from 'utils';
 import styles from './default.module.scss';
@@ -43,7 +43,6 @@ const Video = ({ videoUrl, ...props }) => {
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
-            videoEle.onloadstart = () => message.success('start');
             videoEle.ondurationchange = () => setDuration(videoEle.duration);
             videoEle.onloadedmetadata = () => {
                 const videoHeight = videoEle.videoHeight;
@@ -199,7 +198,7 @@ const Video = ({ videoUrl, ...props }) => {
                                 });
                             }}
                             onAfterChange={handleChangeCurrentTime}
-                            
+                            tooltipVisible={false}
                         />
                         <span className={styles.buffered} style={{ width: `${(bufferTime * 100) / duration}%` }}/>
                     </div>
@@ -211,7 +210,7 @@ const Video = ({ videoUrl, ...props }) => {
                                 ) : playingStatus === 0 ? (
                                     <PauseOutlined />
                                 ) : (
-                                    <RollbackOutlined />
+                                    <ReloadOutlined />
                                 )}
                             </span>
                             <span className={styles.time}>
@@ -228,7 +227,7 @@ const Video = ({ videoUrl, ...props }) => {
                 <div className={classNames(styles.overlay, styles.replay)}>
                     <div className={styles.outer}>
                         <div className={styles.inlineDiv}>
-                            <div onClick={handleTogglePlay}><RollbackOutlined style={{ fontSize: '84px', cursor: 'pointer' }}/></div>
+                            <div onClick={handleTogglePlay}><ReloadOutlined style={{ fontSize: '84px', cursor: 'pointer' }}/></div>
                             <div className={styles.text}>Play again</div>
                         </div>
                     </div>
@@ -279,7 +278,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-27_02-58-55-c3020467c92794caff33cc651837a20d/WebHD_480.mp4?nva=20200317150414&token=03aaef06d5ed2bbe1ed73');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-05-11_11-14-45-8469d1761758f153fa31634801ff8d12/WebHD_480.mp4?nva=20200318062832&token=050f5797f9cad0053907b');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
@@ -342,7 +341,7 @@ const DefaultPlayer = () => {
             <div className={styles.main}>
                 {videoUrl && (
                     <div className={styles.videoAndBtns}>
-                        <Video videoUrl={videoUrl} loop/>
+                        <Video videoUrl={videoUrl}/>
                         <div className={styles.btns}>
                             {editing ? (
                                 <Button onClick={handleCloseChange}>
