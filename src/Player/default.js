@@ -112,16 +112,14 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.onabort = () => handleError('Sorry, the video is stoped downloading.');
         }
     }, [videoUrl]);
-    const handleError = message => {
+    const handleError = messageText => {
         setError({
             status: 1,
-            text: message
+            text: messageText
         });
-        if (width === 0 || height === 0) {
-            setWidth('100%');
-            setHeight(525);
-        }
-    }
+        setWidth(prevWidth => prevWidth === 0 ? '100%' : prevWidth);
+        setHeight(prevHeight => prevHeight === 0 ? 525 : prevHeight);
+    };
     const handleMouseEnter = () => {
         setControlVisible(true);
     };
@@ -178,12 +176,14 @@ const Video = ({ videoUrl, ...props }) => {
         const videoEle = videoRef.current;
         if (videoEle) {
             videoEle.currentTime = videoEle.currentTime - 15;
+            if (videoEle.pause) videoEle.play();
         }
     };
     const handlePlayForward = () => {
         const videoEle = videoRef.current;
         if (videoEle) {
             videoEle.currentTime = videoEle.currentTime + 15;
+            if (videoEle.pause) videoEle.play();
         }
     };
     const handleSetVolume = value => {
@@ -344,7 +344,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-05-11_11-14-45-8469d1761758f153fa31634801ff8d12/WebHD_480.mp4?nva=20200318062832&token=050f5797f9cad0053907b');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-05-11_11-14-45-8469d1761758f153fa31634801ff8d12/WebHD_480.mp4?nva=20200318110018&token=05a26174b39ce1fa9e411');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
