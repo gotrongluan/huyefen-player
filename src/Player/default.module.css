@@ -123,7 +123,16 @@
   .controlVisible
   .options
   .left
-  .playStatus {
+  .playStatus,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  > .sound {
   font-size: 1.7em;
   position: relative;
   top: 3px;
@@ -152,8 +161,115 @@
   .controlVisible
   .options
   .left
-  .playStatus:hover {
+  .playStatus:hover,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  > .sound:hover {
   opacity: 0.8;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume {
+  margin-right: 0;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .sound {
+  display: inline-block;
+  line-height: 25px;
+  background: transparent;
+  font-size: 1.32em;
+  top: 1px;
+  margin-right: 0;
+  padding: 0;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .sound,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .sound:active,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .sound:focus {
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
+  border: none;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .slider {
+  width: 86px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-right: 10px;
+  transition: width 0.2s ease-in-out;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .hiddenSlider {
+  width: 0;
+  margin: 0;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .volume
+  .hiddenSlider
+  :global(.ant-slider-handle) {
+  display: none;
 }
 .defaultPlayer .main .videoAndBtns .video .controlVisible .options .left .time {
   font-family: Arial, Helvetica, sans-serif;

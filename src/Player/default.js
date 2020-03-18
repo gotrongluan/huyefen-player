@@ -6,8 +6,9 @@ import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
     CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined
 } from '@ant-design/icons';
-import PlayBack from 'icons/PlayBack';
-import PlayForward from 'icons/PlayForward';
+import Mute from 'icons/Mute';
+import SmallVolume from 'icons/SmallVolume';
+import Volume from 'icons/Volume';
 import { secondsToTime, checkValidLink } from 'utils';
 import styles from './default.module.scss';
 
@@ -41,7 +42,9 @@ const Video = ({ videoUrl, ...props }) => {
     });
     const [previewWidth, setPreviewWidth] = useState(0);
     const [previewHeight, setPreviewHeight] = useState(0);
-
+    const [volume, setVolume] = useState(0);
+    const [oldVolume, setOldVolume] = useState(0);
+    const [volumeVisible, setVolumeVisible] = useState(false);
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
@@ -69,7 +72,11 @@ const Video = ({ videoUrl, ...props }) => {
                 setWidth(realWidth);
                 setHeight(realHeight);
             };
-            videoEle.onloadeddata = () => setPlayingStatus(videoEle.autoplay ? 0 : 1);
+            videoEle.onloadeddata = () => {
+                setPlayingStatus(videoEle.autoplay ? 0 : 1);
+                setVolume(videoEle.volume);
+                if (videoEle.volume === 0) setOldVolume(1); else setOldVolume(videoEle.volume);
+            };
             videoEle.onprogress = () => {
                 let buffer = 0;
                 for (let i = 0; i < videoEle.buffered.length; i++) {
@@ -100,26 +107,21 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.onplay = () => setPlayingStatus(0);
             videoEle.onpause = () => setPlayingStatus(1);
             videoEle.onended = () => setPlayingStatus(2);
-            videoEle.onerror = () => {
-                setError({
-                    status: 1,
-                    text: 'Sorry, there was an error.'
-                });
-            };
-            videoEle.onstalled = () => {
-                setError({
-                    status: 1,
-                    text: 'Sorry, the video is not available.'
-                });
-            };
-            videoEle.onabort = () => {
-                setError({
-                    status: 1,
-                    text: 'Sorry, the video is stoped downloading.'
-                });
-            };
+            videoEle.onerror = () => handleError('Sorry, there was an error');
+            videoEle.onstalled = () => handleError('Sorry, the video is not available.');
+            videoEle.onabort = () => handleError('Sorry, the video is stoped downloading.');
         }
     }, [videoUrl]);
+    const handleError = message => {
+        setError({
+            status: 1,
+            text: message
+        });
+        if (width === 0 || height === 0) {
+            setWidth('100%');
+            setHeight(525);
+        }
+    }
     const handleMouseEnter = () => {
         setControlVisible(true);
     };
@@ -184,6 +186,26 @@ const Video = ({ videoUrl, ...props }) => {
             videoEle.currentTime = videoEle.currentTime + 15;
         }
     };
+    const handleSetVolume = value => {
+        const videoEle = videoRef.current;
+        if (videoEle) {
+            videoEle.volume = value;
+            if (value > 0) setOldVolume(value);
+        }
+    };
+    const handleToggleVolume = () => {
+        const videoEle = videoRef.current;
+        if (videoEle) {
+            if (volume > 0) {
+                setVolume(0);
+                videoEle.volume = 0;
+            }
+            else {
+                setVolume(oldVolume);
+                videoEle.volume = oldVolume;
+            }
+        }
+    };
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <video
@@ -232,6 +254,21 @@ const Video = ({ videoUrl, ...props }) => {
                             </span>
                             <span className={styles.forward} onClick={handlePlayForward}>
                                 <ForwardOutlined />
+                            </span>
+                            <span className={styles.volume} onMouseEnter={() => setVolumeVisible(true)} onMouseLeave={() => setVolumeVisible(false)}>
+                                <Button className={styles.sound} onClick={handleToggleVolume}>
+                                    {volume === 0 ? <Mute/> : volume < 0.5 ? <SmallVolume/> : <Volume/>}
+                                </Button>
+                                <span className={volumeVisible ? styles.slider : classNames(styles.slider, styles.hiddenSlider)} >
+                                    <Slider
+                                        min={0}
+                                        max={1}
+                                        step={0.1}
+                                        value={volume}
+                                        onChange={value => setVolume(value)}
+                                        onAfterChange={handleSetVolume}
+                                    />
+                                </span>
                             </span>
                             <span className={styles.time}>
                                 {`${secondsToTime(currentTime.value)} / ${secondsToTime(duration)}`}
