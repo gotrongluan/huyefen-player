@@ -281,6 +281,22 @@
             &::-webkit-scrollbar {
                 display: none;
             }
+            .ant-menu-submenu-title {
+                margin: 0;
+                height: 48px;
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+            .ant-menu-submenu-open {
+                .ant-menu-submenu-title {
+                    position: sticky;
+                    position: -webkit-sticky;
+                    top: 0;
+                    z-index: 10;
+                    background: white;
+                }
+            }
         }
+        
     }
 }

@@ -288,6 +288,7 @@ const Video = ({ videoUrl, ...props }) => {
                     144p
                 </MenuItem>
             </SubMenu>
+            <Menu.Divider />
             <SubMenu key="rate" title="Playback rate">
                 <MenuItem key="0.25">
                     0.25
@@ -314,6 +315,7 @@ const Video = ({ videoUrl, ...props }) => {
                     2.0
                 </MenuItem>
             </SubMenu>
+            <Menu.Divider />
             <SubMenu key="captions" title="Captions">
                 <MenuItem key="eng">
                     English

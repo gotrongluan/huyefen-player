@@ -478,3 +478,20 @@
 .settingsPopover :global .ant-menu-root::-webkit-scrollbar {
   display: none;
 }
+.settingsPopover :global .ant-menu-root .ant-menu-submenu-title {
+  margin: 0;
+  height: 48px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.settingsPopover
+  :global
+  .ant-menu-root
+  .ant-menu-submenu-open
+  .ant-menu-submenu-title {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+}
