@@ -114,12 +114,37 @@
   .controlVisible
   .options
   .left
+  .forward,
+.defaultPlayer .main .videoAndBtns .video .controlVisible .options .left .back,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
   .playStatus {
   font-size: 1.7em;
   position: relative;
   top: 3px;
   cursor: pointer;
 }
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .forward:hover,
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .controlVisible
+  .options
+  .left
+  .back:hover,
 .defaultPlayer
   .main
   .videoAndBtns

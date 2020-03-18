@@ -4,8 +4,10 @@ import classNames from 'classnames';
 import { Input, Upload, Button, message, Slider, Row, Col, Tabs } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, DeleteFilled, CloseOutlined,
-    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined
+    CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined
 } from '@ant-design/icons';
+import PlayBack from 'icons/PlayBack';
+import PlayForward from 'icons/PlayForward';
 import { secondsToTime, checkValidLink } from 'utils';
 import styles from './default.module.scss';
 
@@ -78,6 +80,12 @@ const Video = ({ videoUrl, ...props }) => {
                     }
                 } 
             };
+            videoEle.oncanplay = () => {
+                setError({
+                    status: 0,
+                    text: ''
+                });
+            };
             videoEle.ontimeupdate = () => {
                 setCurrentTime(prevState => {
                     if (prevState.changing) return { ...prevState };
@@ -97,24 +105,18 @@ const Video = ({ videoUrl, ...props }) => {
                     status: 1,
                     text: 'Sorry, there was an error.'
                 });
-                setWidth("100%");
-                setHeight(525);
             };
             videoEle.onstalled = () => {
                 setError({
                     status: 1,
                     text: 'Sorry, the video is not available.'
                 });
-                setWidth("100%");
-                setHeight(525);
             };
             videoEle.onabort = () => {
                 setError({
                     status: 1,
                     text: 'Sorry, the video is stoped downloading.'
                 });
-                setWidth("100%");
-                setHeight(525);
             };
         }
     }, [videoUrl]);
@@ -170,6 +172,18 @@ const Video = ({ videoUrl, ...props }) => {
             bottom: 0
         });
     };
+    const handlePlayBack = () => {
+        const videoEle = videoRef.current;
+        if (videoEle) {
+            videoEle.currentTime = videoEle.currentTime - 15;
+        }
+    };
+    const handlePlayForward = () => {
+        const videoEle = videoRef.current;
+        if (videoEle) {
+            videoEle.currentTime = videoEle.currentTime + 15;
+        }
+    };
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <video
@@ -183,7 +197,7 @@ const Video = ({ videoUrl, ...props }) => {
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video element.
             </video>
-            {controlVisible && (
+            {true && (
                 <div className={styles.controlVisible}>
                     <div className={styles.slider} onMouseMove={handleMouseOnSlider} onMouseLeave={resetPreview}>
                         <Slider
@@ -204,6 +218,9 @@ const Video = ({ videoUrl, ...props }) => {
                     </div>
                     <Row className={styles.options}>
                         <Col span={12} className={styles.left}>
+                            <span className={styles.back} onClick={handlePlayBack}>
+                                <BackwardOutlined />
+                            </span>
                             <span className={styles.playStatus} onClick={handleTogglePlay}>
                                 {playingStatus === 1 ? (
                                     <CaretRightFilled />
@@ -212,6 +229,9 @@ const Video = ({ videoUrl, ...props }) => {
                                 ) : (
                                     <ReloadOutlined />
                                 )}
+                            </span>
+                            <span className={styles.forward} onClick={handlePlayForward}>
+                                <ForwardOutlined />
                             </span>
                             <span className={styles.time}>
                                 {`${secondsToTime(currentTime.value)} / ${secondsToTime(duration)}`}
