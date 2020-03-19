@@ -32,7 +32,7 @@ const rates = {
     '0.75': '0.75',
     '1.0': 'Normal',
     '1.25': '1.25',
-    '1.5': '1.25',
+    '1.5': '1.5',
     '1.75': '1.75',
     '2.0': '2.0'
 };
@@ -297,8 +297,11 @@ const Video = ({ videoUrl, ...props }) => {
             setResolution(key);
         }
         else if (submenu === 'rate') {
-            setPlaybackRate(key);
-            
+            const videoEle = videoRef.current;
+            if (videoEle) {
+                videoEle.playbackRate = _.toNumber(key);
+                setPlaybackRate(key);
+            }
         }
         else if (submenu === 'caption') {
             setCaption(key);
@@ -526,7 +529,7 @@ const DefaultPlayer = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200318171658&token=0f76c40ee2b755bfa21e2');
+    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200319063338&token=041578f07e469d0c48b8f');
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
