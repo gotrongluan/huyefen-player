@@ -77,6 +77,7 @@ const Video = ({ videoUrl, ...props }) => {
     const [curOpenKeys, setOpenKeys] = useState([]);
     const [resolution, setResolution] = useState('720');
     const [caption, setCaption] = useState('eng');
+    const [settingsVisible, setSettingsVisible] = useState(false);
     useEffect(() => {
         if (videoRef.current) {
             const videoEle = videoRef.current;
@@ -283,13 +284,30 @@ const Video = ({ videoUrl, ...props }) => {
     };
     const handleOpenKeysChange = openKeys => {
         const latestOpenKey = _.find(openKeys, key => _.indexOf(curOpenKeys, key) === -1);
-        if (_.indexOf(['resolution', 'rate', 'captions'], latestOpenKey) === -1) {
+        if (_.indexOf(['resolution', 'rate', 'caption'], latestOpenKey) === -1) {
             setOpenKeys(openKeys);
         }
         else {
             setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
         }
     };
+    const handleSelectSetting = ({ key }) => {
+        const submenu = curOpenKeys[0];
+        if (submenu === 'resolution') {
+            setResolution(key);
+        }
+        else if (submenu === 'rate') {
+            setPlaybackRate(key);
+            
+        }
+        else if (submenu === 'caption') {
+            setCaption(key);
+        }
+    };
+    const handleSettingsVisibleChange = visible => {
+        if (!visible) setOpenKeys([]);
+        setSettingsVisible(visible);
+    }
     const settingsMenu = (
         <Menu
             mode="inline"
@@ -298,9 +316,10 @@ const Video = ({ videoUrl, ...props }) => {
             onOpenChange={handleOpenKeysChange}
             multiple
             selectedKeys={[resolution, playbackRate, caption]}
+            onSelect={handleSelectSetting}
         >
             <SubMenu key="resolution" title={`Resolution (${resolutions[resolution]})`}>
-                {_.map(_.keys(resolutions), resolutionKey => (
+                {_.map(_.orderBy(_.keys(resolutions), key => key, ['desc']), resolutionKey => (
                     <MenuItem key={resolutionKey} >
                         {resolutions[resolutionKey]}
                         {resolutionKey === resolution && (<CheckOutlined style={{ marginLeft: '5px', color: '#090199', fontSize: '0.85em' }}/>)}
@@ -317,7 +336,7 @@ const Video = ({ videoUrl, ...props }) => {
                 ))}
             </SubMenu>
             <Menu.Divider />
-            <SubMenu key="captions" title={`Captions (${captions[caption]})`}>
+            <SubMenu key="caption" title={`Captions (${captions[caption]})`}>
                 {_.map(_.keys(captions), captionKey => (
                     <MenuItem key={captionKey}>
                         {captions[captionKey]}
@@ -425,6 +444,8 @@ const Video = ({ videoUrl, ...props }) => {
                                     popupClassName={styles.settingsPopover}
                                     popupAlign={{ offset: [!fullScreen ? 0 : -35, -10] }}
                                     getPopupContainer={() => divRef.current}
+                                    visible={settingsVisible}
+                                    onVisibleChange={handleSettingsVisibleChange}
                                 >
                                     <SettingFilled />
                                 </Popover>
