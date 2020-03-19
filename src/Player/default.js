@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { Input, Upload, Button, message, Slider, Row, Col, Dropdown, Menu, Tabs, Tooltip, Popover, Layout } from 'antd';
+import { Input, Upload, Button, message, Slider, Row, Col, Dropdown, Menu, Tabs, Tooltip, Popover, Layout, Modal } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, ExpandOutlined, CloseOutlined,
     CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined,
-    FileTextFilled, SettingFilled, CheckOutlined
+    FileTextFilled, SettingFilled, CheckOutlined, QuestionCircleFilled
 } from '@ant-design/icons';
 import Mute from 'icons/Mute';
 import SmallVolume from 'icons/SmallVolume';
@@ -544,7 +544,13 @@ const DefaultPlayer = () => {
         setExternalUrl('');
     };
     const handleDelete = () => {
-
+        Modal.confirm({
+            icon: <QuestionCircleFilled />,
+            content: 'Delete this video? Are you sure?',
+            okText: 'Yes',
+            cancelText: 'No',
+            onOk: () => setVideoUrl(null)
+        });
     };
     const handleAddExternal = () => {
         setVideoUrl(null);
