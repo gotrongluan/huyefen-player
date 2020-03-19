@@ -191,11 +191,13 @@ const Video = ({ videoUrl, ...props }) => {
         if (videoEle) {
             if (playingStatus === 0) videoEle.pause();
             else if (playingStatus === 2) {
-                videoEle.currentTime = 0;
+                setCurrentTime({
+                    changing: false,
+                    value: 0
+                });
                 videoEle.play();
             }
             else videoEle.play();
-            setPlayingStatus(playingStatus === 0 ? 1 : 0);
         }
     };
     const handleChangeCurrentTime = value => {
@@ -524,12 +526,10 @@ const Video = ({ videoUrl, ...props }) => {
 };
 
 const DefaultPlayer = () => {
-    const videoRef = useRef(null);
-    const divRef = useRef(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [editing, setEditing] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('https://a2.udemycdn.com/2018-02-26_01-31-00-4d4a5ee8053babd1ac903be8fa1aceed/WebHD_480.mp4?nva=20200319063338&token=041578f07e469d0c48b8f');
+    const [videoUrl, setVideoUrl] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [externalUrl, setExternalUrl] = useState('');
     const handleCloseChange = () => {
