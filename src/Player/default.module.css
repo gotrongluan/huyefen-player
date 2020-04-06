@@ -39,6 +39,16 @@
   display: inline-block;
   cursor: pointer;
 }
+.defaultPlayer .main .videoAndBtns .video .videoEle::-webkit-media-controls {
+  display: none !important;
+}
+.defaultPlayer
+  .main
+  .videoAndBtns
+  .video
+  .videoEle::-webkit-media-controls-enclosure {
+  display: none !important;
+}
 .defaultPlayer .main .videoAndBtns .video .controlVisible {
   background: linear-gradient(
     to top,
