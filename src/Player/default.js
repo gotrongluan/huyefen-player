@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { Input, Upload, Button, message, Slider, Row, Col, Dropdown, Menu, Tabs, Tooltip, Popover, Layout, Modal } from 'antd';
+import { Input, Upload, Button, message, Slider, Row, Col, Menu, Tabs, Tooltip, Popover, Dropdown, Modal } from 'antd';
 import {
     PlayCircleFilled, UploadOutlined, LoadingOutlined, CloudUploadOutlined, DeleteOutlined, EditOutlined, ExpandOutlined, CloseOutlined,
     CaretRightFilled, PauseOutlined, ReloadOutlined, Loading3QuartersOutlined, FrownOutlined, BackwardOutlined, ForwardOutlined, CompressOutlined,
-    FileTextFilled, SettingFilled, CheckOutlined, QuestionCircleFilled
+    FileTextFilled, SettingFilled, CheckOutlined, QuestionCircleFilled, InfoCircleOutlined, QuestionCircleOutlined, RetweetOutlined, LinkOutlined
 } from '@ant-design/icons';
 import Mute from 'icons/Mute';
 import SmallVolume from 'icons/SmallVolume';
@@ -17,7 +17,6 @@ const { TabPane } = Tabs;
 const { Search } = Input;
 const { SubMenu } = Menu;
 const MenuItem = Menu.Item;
-const { Sider } = Layout;
 
 const resolutions = {
     '720': '720p (HD)',
@@ -46,6 +45,7 @@ const Video = ({ videoUrl, ...props }) => {
     const videoRef = useRef(null);
     const previewRef = useRef(null);
     const [fullScreen, setFullScreen] = useState(false);
+    const [loop, setLoop] = useState(false);
     const [controlVisible, setControlVisible] = useState(false);
     const [visibleTimer, setVisibleTimer] = useState(null);
     const [duration, setDuration] = useState(null);
@@ -312,7 +312,13 @@ const Video = ({ videoUrl, ...props }) => {
     const handleSettingsVisibleChange = visible => {
         if (!visible) setOpenKeys([]);
         setSettingsVisible(visible);
-    }
+    };
+    const handleSelectOption = ({ key }) => {
+        console.log(key);
+        if (key === "loop") {
+            setLoop(!loop);
+        }
+    };
     const settingsMenu = (
         <Menu
             mode="inline"
@@ -351,19 +357,43 @@ const Video = ({ videoUrl, ...props }) => {
             </SubMenu>
         </Menu>
     );
+    const dropdownMenu = (
+        <Menu className={styles.dropdownMenu} selectedKeys={[]} onClick={handleSelectOption}>
+            <MenuItem key="loop">
+                <RetweetOutlined />Loop
+                {loop && (
+                    <span className={styles.loopOk}>
+                        <CheckOutlined />
+                    </span>
+                )}
+            </MenuItem>
+            <MenuItem key="copy">
+                <LinkOutlined />Copy URL video
+            </MenuItem>
+            <MenuItem key="help">
+                <QuestionCircleOutlined />Help center
+            </MenuItem>
+            <MenuItem key="info">
+                <InfoCircleOutlined />Information detail
+            </MenuItem>
+        </Menu>
+    );
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }}>
-            <video
-                {...props}
-                ref={videoRef}
-                className={styles.videoEle}
-                width={!fullScreen ? width : '100%'}
-                height={!fullScreen ? height : '100%'}
-                onClick={handleTogglePlay}
-            >
-                <source src={videoUrl} type="video/mp4" />
-                Your browser does not support the video element.
-            </video>
+            <Dropdown overlay={dropdownMenu} trigger={['contextMenu']} overlayClassName={styles.contextDropdown}>
+                <video
+                    {...props}
+                    ref={videoRef}
+                    className={styles.videoEle}
+                    width={!fullScreen ? width : '100%'}
+                    height={!fullScreen ? height : '100%'}
+                    onClick={handleTogglePlay}
+                    loop={loop}
+                >
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video element.
+                </video>
+            </Dropdown>
             <div className={styles.controlVisible} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 <div style={{ opacity: controlVisible ? 1 : 1 }}>
                     <div className={styles.slider} onMouseMove={handleMouseOnSlider} onMouseLeave={resetPreview}>

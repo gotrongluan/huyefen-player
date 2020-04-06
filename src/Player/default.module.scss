@@ -1,4 +1,15 @@
 .defaultPlayer {
+    video::-internal-media-controls-download-button {
+        display:none;
+    }
+    
+    video::-webkit-media-controls-enclosure {
+        overflow:hidden;
+    }
+    
+    video::-webkit-media-controls-panel {
+        width: calc(100% + 30px); /* Adjust as needed */
+    }
     .title {
         font-size: 64px;
         color: #090199;
@@ -298,5 +309,18 @@
             }
         }
         
+    }
+}
+
+.contextDropdown {
+    .dropdownMenu {
+        width: 220px;
+        :global(.ant-dropdown-menu-item) {
+            color: #090199;
+        }
+        .loopOk {
+            float: right;
+            font-size: 0.9em;
+        }
     }
 }
