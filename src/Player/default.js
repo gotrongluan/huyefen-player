@@ -380,7 +380,7 @@ const Video = ({ videoUrl, ...props }) => {
     );
     return (
         <div className={styles.video} ref={divRef} style={{ height: height }}>
-            <Dropdown overlay={dropdownMenu} trigger={['contextMenu']} overlayClassName={styles.contextDropdown}>
+            <Dropdown overlay={dropdownMenu} trigger={['contextMenu']} overlayClassName={styles.contextDropdown} getPopupContainer={() => divRef.current}>
                 <video
                     {...props}
                     ref={videoRef}
@@ -389,6 +389,11 @@ const Video = ({ videoUrl, ...props }) => {
                     height={!fullScreen ? height : '100%'}
                     onClick={handleTogglePlay}
                     loop={loop}
+                    controlsList="nodownload"
+                    onContextMenu={e => {
+                        e.preventDefault();
+                        return false;
+                    }}
                 >
                     <source src={videoUrl} type="video/mp4" />
                     Your browser does not support the video element.
